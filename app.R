@@ -12,7 +12,7 @@ library(shiny)
 library(readr)
 library(ggplot2)
 
-source('data/getClusters.r')
+source('data/getClusters.R')
 
 ui<-fluidPage(
   titlePanel("K-Means Cluster Bot"),
