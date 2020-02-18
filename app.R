@@ -15,13 +15,13 @@ library(shinydashboard)
 
 source('data/getClusters.R')
 
-ui<-shinydashboard::dashboardPage(
+ui<-shinydashboard::dashboardPage(skin = "green",
   dashboardHeader(title = "K-Means Cluster Bot"),
   
   dashboardSidebar(
     h4("Description"),
     h5("This app performs k-means clustering on any numeric data set."),
-    h5("The algorithm scales each numeric column between 0 and 1, runs k-means clustering for up to 15 clusters, and displays the results."),
+    h5("The algorithm scales each column between 0 and 1, runs k-means clustering for up to 15 clusters, and displays the results."),
     h5("Non-numeric columns will be excluded from the clustering analysis."),
     h5("Data must be cleaned with no NA values.  The first column must contain a unique ID for each observation."),
     
