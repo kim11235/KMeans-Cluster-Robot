@@ -35,7 +35,8 @@ ui<-shinydashboard::dashboardPage(skin = "green",
                   "text/csv",
                   "text/comma-separated-values,text/plain",
                   ".csv")
-        ) 
+        ),
+    sliderInput(inputId = "num_clusters", label = "Number of Clusters", min = 1, max = 15, value = 3, round = T)
       ),
     dashboardBody(
       fluidRow(
@@ -44,10 +45,9 @@ ui<-shinydashboard::dashboardPage(skin = "green",
       ),
       
       # Button
-      fluidRow(column(width = 3, br(), uiOutput("cluster_slider")),
-               column(width = 3, br(), uiOutput("download_button")),
-               column(width = 3, uiOutput("var_x_select")),
-               column(width = 3, uiOutput("var_y_select"))
+      fluidRow(column(width = 4, br(), uiOutput("download_button")),
+               column(width = 4, uiOutput("var_x_select")),
+               column(width = 4, uiOutput("var_y_select"))
       ),
       
       tableOutput(outputId = 'contents')
@@ -66,11 +66,12 @@ server<-function(input, output){
   
   #Call the function to calculate the k-means clusters
   df<-reactive({
+    
     req(contents())
     withProgress(message = "Finding clusters...", 
                  detail = "This may take a while",
                  value = NULL, {
-                                  getClusters(contents())
+                                  isolate(getClusters(contents()))
                  })
   })
 
@@ -150,10 +151,11 @@ server<-function(input, output){
     vars<-vars[!(vars %in% input$var_x_col)]
     selectInput(inputId = "var_y_col", label = "Plot Variable 2", choices = vars, selected = TRUE)
   })
-  output$cluster_slider<-renderUI({
-    req(cluster_results())
-    sliderInput(inputId = "num_clusters", label = "Number of Clusters", min = 1, max = 15, value = 3, round = T)
-  })
+  
+  #output$cluster_slider<-renderUI({
+    #req(cluster_results())
+    #sliderInput(inputId = "num_clusters", label = "Number of Clusters", min = 1, max = 15, value = 3, round = T)
+  #})
 }
 
 shinyApp(ui, server)
