@@ -15,13 +15,10 @@ library(shinydashboard)
 
 source('data/getClusters.R')
 
-ui<-#fluidPage(
-  shinydashboard::dashboardPage(
-  #titlePanel("K-Means Cluster Bot"),
+ui<-shinydashboard::dashboardPage(
   dashboardHeader(title = "K-Means Cluster Bot"),
-  #sidebarLayout(
+  
   dashboardSidebar(
-    #sidebarPanel( NEW
     h4("Description"),
     h5("This app performs k-means clustering on any numeric data set."),
     h5("The algorithm scales each numeric column between 0 and 1, runs k-means clustering for up to 15 clusters, and displays the results."),
@@ -38,27 +35,24 @@ ui<-#fluidPage(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
                   ".csv")
-      ) #,
-      #sliderInput(inputId = "num_clusters", label = "Number of Clusters", min = 1, max = 15, value = 3, round = T)
-    #) #NEW
+        ) 
       ),
-    #mainPanel(
     dashboardBody(
       fluidRow(
       column(5, plotOutput("wss_plot")),
       column(7, plotOutput("cluster_plot"))
       ),
+      
       # Button
       fluidRow(column(width = 3, br(), uiOutput("cluster_slider")),
                column(width = 3, br(), uiOutput("download_button")),
                column(width = 3, uiOutput("var_x_select")),
                column(width = 3, uiOutput("var_y_select"))
       ),
-      #plotOutput("cluster_plot"),
+      
       tableOutput(outputId = 'contents')
     )
   )
-#) NEW COMMENT OUT
 
 server<-function(input, output){
   #Read input file from user and save in reactive list contents
@@ -128,7 +122,6 @@ server<-function(input, output){
               legend.text = element_text(size = 14),
               legend.title = element_text(size = 16))
     }
-    #plot(cluster_results()[,1]~cluster_results()[,2], col = cluster_results()[,ncol(cluster_results())], pch = 16)
   })
   
   # Downloadable csv of selected dataset ----
