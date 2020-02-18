@@ -2,7 +2,7 @@
 #new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 #if(length(new.packages)) install.packages(new.packages)
 #install.packages("shiny", dependencies = TRUE)
-#install.packages("shinydashboards")
+#install.packages("shinydashboard")
 
 library(tidyr)
 library(stringr)
@@ -11,38 +11,54 @@ library(lubridate)
 library(shiny)
 library(readr)
 library(ggplot2)
+library(shinydashboard)
 
 source('data/getClusters.R')
 
-ui<-fluidPage(
-  titlePanel("K-Means Cluster Bot"),
-  sidebarLayout(
-    sidebarPanel(
-      p("Upload the data you want to cluster, and select the number of clusters you want to use based on the plot of within-clusters sum of squares."),
-        p("Non-numeric columns will be excluded from the clustering analysis."),
-      p("Data must be cleaned with no NA values.  The first column must contain a unique ID for each observation."),
-      p("The app scales each numeric column between 0 and 1, runs k-means clustering for up to 15 clusters, and displays the results in a plot."),
+ui<-#fluidPage(
+  shinydashboard::dashboardPage(
+  #titlePanel("K-Means Cluster Bot"),
+  dashboardHeader(title = "K-Means Cluster Bot"),
+  #sidebarLayout(
+  dashboardSidebar(
+    #sidebarPanel( NEW
+    h4("Description"),
+    h5("This app performs k-means clustering on any numeric data set."),
+    h5("The algorithm scales each numeric column between 0 and 1, runs k-means clustering for up to 15 clusters, and displays the results."),
+    h5("Non-numeric columns will be excluded from the clustering analysis."),
+    h5("Data must be cleaned with no NA values.  The first column must contain a unique ID for each observation."),
+    
+    h4("How to Use the K-Means Cluster Bot:"),
+    h5("1. Upload the data you want to cluster."),
+    h5('2. Click "Calculate Now!"'),
+    h5("3. Based on the plot of within-cluster sum of squares, select the number of clusters you want to use."),
+      
       fileInput("file1", "Choose CSV File",
                 accept = c(
                   "text/csv",
                   "text/comma-separated-values,text/plain",
                   ".csv")
+      ) #,
+      #sliderInput(inputId = "num_clusters", label = "Number of Clusters", min = 1, max = 15, value = 3, round = T)
+    #) #NEW
       ),
-      sliderInput(inputId = "num_clusters", label = "Number of Clusters", min = 1, max = 15, value = 3, round = T)
-    ),
-    mainPanel(
-      plotOutput("wss_plot"),
-
+    #mainPanel(
+    dashboardBody(
+      fluidRow(
+      column(5, plotOutput("wss_plot")),
+      column(7, plotOutput("cluster_plot"))
+      ),
       # Button
-      fluidRow(column(width = 4, br(), uiOutput("download_button")),
-               column(width = 4, uiOutput("var_x_select")),
-               column(width = 4, uiOutput("var_y_select"))
+      fluidRow(column(width = 3, br(), uiOutput("cluster_slider")),
+               column(width = 3, br(), uiOutput("download_button")),
+               column(width = 3, uiOutput("var_x_select")),
+               column(width = 3, uiOutput("var_y_select"))
       ),
-      plotOutput("cluster_plot"),
+      #plotOutput("cluster_plot"),
       tableOutput(outputId = 'contents')
     )
   )
-)
+#) NEW COMMENT OUT
 
 server<-function(input, output){
   #Read input file from user and save in reactive list contents
@@ -126,7 +142,7 @@ server<-function(input, output){
   )
   output$download_button<-renderUI({
     req(cluster_results())
-    downloadButton(label = "Download Cluster Results", 
+    downloadButton(label = "Download Clusters", 
                    inputId = "downloadData",
                    outputId = "downloadData")
   })
@@ -140,6 +156,10 @@ server<-function(input, output){
     vars<-colnames(cluster_results())[2:ncol(cluster_results())-1]
     vars<-vars[!(vars %in% input$var_x_col)]
     selectInput(inputId = "var_y_col", label = "Plot Variable 2", choices = vars, selected = TRUE)
+  })
+  output$cluster_slider<-renderUI({
+    req(cluster_results())
+    sliderInput(inputId = "num_clusters", label = "Number of Clusters", min = 1, max = 15, value = 3, round = T)
   })
 }
 
