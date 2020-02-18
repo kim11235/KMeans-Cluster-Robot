@@ -57,7 +57,11 @@ server<-function(input, output){
   #Call the function to calculate the k-means clusters
   df<-reactive({
     req(contents())
-    getClusters(contents())
+    withProgress(message = "Finding clusters...", 
+                 detail = "This may take a while",
+                 value = NULL, {
+                                  getClusters(contents())
+                 })
   })
 
   #Read the within-clusters sum of squares calculations from the clustering results
