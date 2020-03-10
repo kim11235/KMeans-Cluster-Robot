@@ -27,9 +27,8 @@ ui<-shinydashboard::dashboardPage(skin = "green",
     
     h4("How to Use the K-Means Cluster Bot:"),
     h5("1. Upload the data you want to cluster."),
-    h5('2. Click "Calculate Now!"'),
-    h5("3. Based on the plot of within-cluster sum of squares, select the number of clusters you want to use."),
-      
+    h5("2. Based on the plot of within-cluster sum of squares, select the number of clusters you want to use."),
+    h5("3. Download results as a spreadsheet and create plots with custom x and y axes."),  
       fileInput("file1", "Choose CSV File",
                 accept = c(
                   "text/csv",
