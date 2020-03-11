@@ -151,10 +151,6 @@ server<-function(input, output){
     selectInput(inputId = "var_y_col", label = "Plot Variable 2", choices = vars, selected = TRUE)
   })
   
-  #output$cluster_slider<-renderUI({
-    #req(cluster_results())
-    #sliderInput(inputId = "num_clusters", label = "Number of Clusters", min = 1, max = 15, value = 3, round = T)
-  #})
 }
 
 shinyApp(ui, server)
